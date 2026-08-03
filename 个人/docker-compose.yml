@@ -1,0 +1,84 @@
+version: '3.9'
+
+# ============================================================
+# 生产部署
+# 用法: docker compose up -d --build
+# 配合外部 Nginx (port.xujianfei.cn / portal.xujianfei.cn) 反代
+# ============================================================
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portal-app
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/data/dev.db
+      - AUTH_SECRET=${AUTH_SECRET}
+      - AUTH_TRUST_HOST=true
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME:-我的导航}
+      - LOG_LEVEL=info
+      # 经期预测: 容器内走 service name, 不要暴露 5001 到公网
+      - PERIOD_API_URL=http://period-flask:5001
+      - PERIOD_SERVICE_SECRET=${PERIOD_SERVICE_SECRET}
+    volumes:
+      - portal-data:/data  # SQLite 持久化
+    depends_on:
+      - period-flask
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3000/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # 经期预测 Flask 微服务
+  # 不暴露端口到宿主机 (仅 portal-app 可达)
+  period-flask:
+    build:
+      context: ../period-tracker
+      dockerfile: Dockerfile
+    container_name: portal-period-flask
+    restart: unless-stopped
+    expose:
+      - '5001'  # 仅容器网络可达, 不映射到宿主机
+    environment:
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5001
+      - SECRET_KEY=${FLASK_SECRET_KEY:-change-me}
+      - DATABASE_URL=sqlite:////app/instance/period.db
+      - PERIOD_SERVICE_SECRET=${PERIOD_SERVICE_SECRET}
+      - PERIOD_BRIDGE_SKEW_SECONDS=${PERIOD_BRIDGE_SKEW_SECONDS:-300}
+      - CORS_ORIGINS=
+    volumes:
+      - flask-data:/app/instance  # 周期数据持久化
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:5001/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # 可选: Postgres (如需切到 Postgres, 改 DATABASE_URL 并启用此服务)
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: portal-db
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: portal
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: portal
+  #   volumes:
+  #     - portal-pgdata:/var/lib/postgresql/data
+  #   ports:
+  #     - '127.0.0.1:5432:5432'
+
+volumes:
+  portal-data:
+  flask-data:
+  # portal-pgdata:

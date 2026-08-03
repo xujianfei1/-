@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Claude 风格暖色奶油 */
+    --bg: 40 30% 97%;
+    --bg-secondary: 40 30% 98%;
+    --surface: 0 0% 100%;
+    --surface-hover: 40 30% 98%;
+    --text: 30 10% 12%;
+    --text-muted: 30 5% 43%;
+    --text-faint: 30 5% 65%;
+    --accent: 18 55% 58%;
+    --accent-hover: 18 50% 50%;
+    --accent-soft: 18 55% 58%;
+    --border: 30 10% 12%;
+    --border-strong: 30 10% 12%;
+  }
+
+  .dark {
+    --bg: 60 3% 15%;
+    --bg-secondary: 60 3% 18%;
+    --surface: 60 3% 18%;
+    --surface-hover: 60 3% 22%;
+    --text: 40 30% 97%;
+    --text-muted: 40 5% 65%;
+    --text-faint: 40 5% 45%;
+    --accent: 18 60% 65%;
+    --accent-hover: 18 65% 70%;
+    --accent-soft: 18 60% 65%;
+    --border: 40 30% 97%;
+    --border-strong: 40 30% 97%;
+  }
+
+  * {
+    @apply border-border/10;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-image: radial-gradient(
+      ellipse 80% 50% at 50% 0%,
+      hsl(var(--accent) / 0.10),
+      transparent 60%
+    );
+    background-attachment: fixed;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  ::selection {
+    background-color: hsl(var(--accent) / 0.20);
+    color: hsl(var(--accent));
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* GPU 加速层: 给需要 transform/opacity 动画的元素 */
+  .gpu {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+
+  /* 减弱动效偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

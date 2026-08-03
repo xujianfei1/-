@@ -1,0 +1,269 @@
+// ============================================================
+// 个人门户 - Prisma schema
+// ============================================================
+// 切换数据库: 修改 provider + DATABASE_URL
+//   sqlite -> postgresql (推荐生产)
+//   本地开发用 sqlite 即可, Prisma 抽象层可平滑迁移
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// NextAuth.js 模型
+// ============================================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  /// 私人云盘配额 (字节). 共享池文件不计入. 默认 1 GB.
+  quotaBytes    BigInt    @default(1073741824)
+  /// admin 旁路: 跨用户读/删任意文件 + 封禁/注销账号
+  isAdmin       Boolean   @default(false)
+  /// true = 已封禁, 登录被拒, 已有 session 也不可写
+  banned        Boolean   @default(false)
+  /// 密码最后修改时间. 重置密码时更新, jwt callback 比对, 旧 token 自动失效
+  passwordChangedAt DateTime?
+  /// 密码重置 token (256-bit 随机, 存 hash 而非原文). 一次性, 1h 过期
+  passwordResetToken    String?   @unique
+  passwordResetExpires  DateTime?
+  accounts      Account[]
+  sessions      Session[]
+  files         File[]    @relation("FileOwner")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================================
+// 业务模型
+// ============================================================
+
+/// 主页服务卡片
+model Service {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  url         String?
+  /// lucide 图标名: home, shopping-cart, clock, pencil, folder, book-open, upload, plus ...
+  icon        String   @default("plus")
+  /// 状态: online | dev | plan | idea
+  status      String   @default("idea")
+  category    String?
+  sortOrder   Int      @default(0)
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([status])
+  @@index([sortOrder])
+}
+
+/// 主页快捷链接
+model Link {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  icon      String   @default("link")
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+/// 访问日志 (后续可扩展分析)
+model VisitLog {
+  id        String   @id @default(cuid())
+  path      String
+  referer   String?
+  userAgent String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([path])
+  @@index([createdAt])
+}
+
+// ============================================================
+// 云盘 (pan.xujianfei.cn) 文件树
+// ============================================================
+//   - 私人文件: ownerId=用户, isShared=false, 计入配额
+//   - 共享池:   ownerId=创建者(审计用), isShared=true, 任何登录用户可读写
+//   - 目录树:   parentId 自我引用, 根目录 parentId=null
+//   - 物理文件: storageKey 指向 StorageDriver (本地: 相对路径; OSS: object key)
+// ============================================================
+
+model File {
+  id         String   @id @default(cuid())
+  /// 文件所有者. 私人文件=用户 id; 共享池文件=创建者 id (审计用, 权限仍按 isShared 判)
+  ownerId    String?
+  /// 父目录 id. null = 根
+  parentId   String?
+  name       String
+  /// MIME 类型; null = 目录
+  mimeType   String?
+  /// 文件大小 (字节); 目录为 0
+  size       BigInt   @default(0)
+  /// StorageDriver 用的 key; 目录为 null
+  storageKey String?
+  isDir      Boolean  @default(false)
+  /// true = 共享池 (全员可读写, 不计入创建者配额)
+  isShared   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  owner      User?    @relation("FileOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  parent     File?    @relation("FileTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children   File[]   @relation("FileTree")
+
+  @@index([ownerId, parentId, isShared])
+  @@index([isShared, parentId])
+  @@index([parentId])
+  @@index([name])
+}
+
+/// 分块上传会话 (M2)
+///
+/// 两种模式:
+///   - proxy:  客户端 chunk → next-server → StorageDriver (走 ECS 带宽)
+///   - direct: 客户端 chunk → OSS 预签名 PUT (不走 ECS, 大文件友好)
+///
+/// 刷新页面后, 前端 GET /uploads?status=uploading 拿到未完成会话, 接着传 (断点续传).
+///
+/// receivedMask: JSON 字符串 array of booleans, 长度 = totalChunks
+///   - true  = 该 chunk 已收到
+///   - false = 未收到, 需重传
+/// ossUploadId / ossKey: direct 模式专用, null = proxy 模式.
+model UploadSession {
+  id           String   @id @default(cuid())
+  ownerId      String
+  /// 用户上传时填的文件名
+  fileName     String
+  /// 原始 MIME (可能为空, 落到 application/octet-stream)
+  mimeType     String?
+  /// 文件总字节数
+  fileSize     BigInt
+  /// 分片大小 (字节, 默认 5 MB)
+  chunkSize    Int
+  /// 总分片数 = ceil(fileSize / chunkSize)
+  totalChunks  Int
+  /// 已收到的分片位图, JSON 数组 (例: [true,false,true,...])
+  receivedMask String
+  /// staging 路径: <scope>/staging/<uploadId>/file (chunk N 在 <scope>/staging/<uploadId>/chunks/N). proxy 模式用.
+  storageKey   String
+  /// 目标 parentId (完成时建 File 记录的 parent)
+  parentId     String?
+  isShared     Boolean  @default(false)
+  /// true: 上传的是 zip 压缩包, complete 时解压到 parentId 下还原目录结构
+  isZip        Boolean  @default(false)
+  /// 'proxy' | 'direct'. 老 session 没这个字段默认 proxy.
+  mode         String   @default("proxy")
+  /// OSS multipart uploadId (direct 模式专用). 配合 ossKey 调 completeMultipartUpload / abortMultipartUpload.
+  ossUploadId  String?
+  /// OSS object key (direct 模式专用). multipart 完成后文件落在这里, 也就是 File.storageKey.
+  ossKey       String?
+  /// uploading | completed | aborted
+  status       String   @default("uploading")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([ownerId, status])
+  @@index([status, updatedAt])
+}
+
+/// 分享链接 (M2)
+model FileShare {
+  id            String   @id @default(cuid())
+  /// 随机 token (32 字节, base64url), 公开访问用
+  token         String   @unique
+  /// 分享创建者
+  ownerId       String
+  /// 分享的根 file (文件或文件夹, isDir=true 时递归打包)
+  fileId        String
+  /// 可选密码 (bcrypt hash), 公开访问时需要
+  passwordHash  String?
+  /// 可选过期时间
+  expiresAt     DateTime?
+  /// 是否允许下载 (false: 只能预览/查看文件名)
+  allowDownload Boolean  @default(true)
+  /// 访问次数 (下载 + 浏览)
+  accessCount   Int      @default(0)
+  lastAccessedAt DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([ownerId])
+  @@index([expiresAt])
+}
+
+/// Admin 操作审计日志 (M3 安全加固)
+/// 记: 谁在什么时候对谁做了什么. 用于事后追责.
+/// 不在 admin 操作里抛错, 失败只 console.error, 不阻塞业务.
+model AdminAuditLog {
+  id          String   @id @default(cuid())
+  /// 操作者 user id
+  actorId     String
+  /// 操作者邮箱快照 (用户被注销后仍可读)
+  actorEmail  String?
+  /// 动作类型: ban_user | unban_user | delete_user | delete_file | grant_admin
+  action      String
+  /// 目标 id (user / file id)
+  targetId    String?
+  /// 目标描述快照 (email / file name / ...)
+  targetLabel String?
+  /// 附加信息 (JSON 字符串: ban 持续时间 / 删除文件大小 等)
+  meta        String?
+  /// 操作者 IP
+  ip          String?
+  createdAt   DateTime @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([action, createdAt])
+  @@index([createdAt])
+}

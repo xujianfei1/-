@@ -1,0 +1,65 @@
+# ============================================================
+# 个人门户 - .gitignore
+# ============================================================
+
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Testing
+coverage
+*.lcov
+.nyc_output
+test-results
+playwright-report
+playwright/.cache
+
+# Next.js
+.next
+out
+build
+dist
+next-env.d.ts
+
+# Production
+*.tsbuildinfo
+
+# Misc
+.DS_Store
+*.pem
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Local env files
+.env
+.env*.local
+.env.development
+.env.production
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+prisma/migrations/dev/
+
+# Docker
+.docker/
+
+# Logs
+logs
+*.log

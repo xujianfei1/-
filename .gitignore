@@ -1,0 +1,36 @@
+# ============ 生产代码 - Microsoft 风格的提交规范 ============
+# 提交时: 个人/  一次性 commit 当天所有改动
+# 后续:  feat: xxx / fix: xxx / refactor: xxx / docs: xxx
+
+# .gitignore (C:\Users\26039\Desktop\测试\.gitignore)
+# 保护: 个人.zip 这类大文件, 其他项目的杂项
+
+# 备份
+*.bak
+*.bak-*
+个人.bak-*
+
+# 大文件
+*.zip
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+
+# 其他项目根目录 (不追踪)
+ecommerce_price_tracker/
+pdf-ocr-extractor/
+period-tracker/
+
+# 根目录杂项 (IDE / 测试报告 / 临时)
+.trae/
+.vscode/
+.workbuddy/
+test-prisma.mjs
+新建 文本文档.txt
+server_smoke_test.sh
+period-tracker-*.html
+period-tracker-*.tar.gz
+
+# 个人/ 项目内自带的 .gitignore 已覆盖
+# (node_modules / .next / .env / prisma/*.db 等)

@@ -1,0 +1,28 @@
+# ============================================================
+# 个人门户 - .dockerignore
+# ============================================================
+
+**/node_modules
+**/npm-debug.log
+**/yarn-debug.log
+**/yarn-error.log
+**/.next
+**/coverage
+**/.env
+**/.env*.local
+**/.git
+**/.gitignore
+**/Dockerfile
+**/docker-compose*.yml
+**/.dockerignore
+**/README.md
+**/.vscode
+**/.idea
+**/dist
+**/build
+**/*.log
+**/.DS_Store
+**/playwright-report
+**/test-results
+**/prisma/dev.db
+**/prisma/dev.db-journal
