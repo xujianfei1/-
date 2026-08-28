@@ -34,3 +34,6 @@ period-tracker-*.tar.gz
 
 # 个人/ 项目内自带的 .gitignore 已覆盖
 # (node_modules / .next / .env / prisma/*.db 等)
+
+# ZCode 会话配置
+.zcode/

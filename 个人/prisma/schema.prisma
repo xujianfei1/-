@@ -267,3 +267,28 @@ model AdminAuditLog {
   @@index([action, createdAt])
   @@index([createdAt])
 }
+
+/// 博客文章 (v1)
+/// content 存 Markdown 原文, 渲染在前端; tags 逗号分隔 (SQLite 不支持标量列表)
+model Post {
+  id          String    @id @default(cuid())
+  /// URL 标识, /blog/[slug], 仅小写字母数字连字符
+  slug        String    @unique
+  title       String
+  /// 列表页摘要, 空则前端截取正文纯文本前 120 字
+  summary     String?
+  /// Markdown 原文
+  content     String
+  /// 逗号分隔标签, 如 "next.js,部署"
+  tags        String?
+  /// draft | published
+  status      String    @default("draft")
+  /// 阅读量 (详情页访问 +1)
+  views       Int       @default(0)
+  /// 首次发布时间, 列表按此倒序
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status, publishedAt])
+}
