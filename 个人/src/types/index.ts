@@ -22,6 +22,14 @@ export interface Post {
 /** 列表页用的文章裁剪版 (无正文) */
 export type PostListItem = Omit<Post, 'content'>;
 
+export interface BlogComment {
+  id: string;
+  body: string;
+  createdAt: Date | string;
+  userId: string;
+  user: { name: string | null };
+}
+
 export interface Service {
   id: string;
   name: string;

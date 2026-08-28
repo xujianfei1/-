@@ -2,7 +2,13 @@
  * 博客校验规则单元测试
  */
 import { describe, it, expect } from 'vitest';
-import { postCreateSchema, postUpdateSchema, slugify, postSlugSchema } from '@/lib/blog-validations';
+import {
+  postCreateSchema,
+  postUpdateSchema,
+  postSlugSchema,
+  commentCreateSchema,
+  slugify,
+} from '@/lib/blog-validations';
 
 const validPost = {
   title: '我的第一篇文章',
@@ -84,5 +90,20 @@ describe('slugify', () => {
 
   it('截断到 80 字符', () => {
     expect(slugify('a'.repeat(120)).length).toBe(80);
+  });
+});
+
+describe('commentCreateSchema', () => {
+  it('正常评论通过', () => {
+    expect(commentCreateSchema.safeParse({ body: '好文章!' }).success).toBe(true);
+  });
+
+  it('空串 / 纯空白被拒', () => {
+    expect(commentCreateSchema.safeParse({ body: '' }).success).toBe(false);
+    expect(commentCreateSchema.safeParse({ body: '   ' }).success).toBe(false);
+  });
+
+  it('超 1000 字被拒', () => {
+    expect(commentCreateSchema.safeParse({ body: '评'.repeat(1001) }).success).toBe(false);
   });
 });

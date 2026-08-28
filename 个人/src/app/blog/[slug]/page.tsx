@@ -11,6 +11,7 @@ import { auth } from '@/lib/auth';
 import { Topbar } from '@/components/topbar';
 import { Footer } from '@/components/footer';
 import { Markdown } from '@/components/blog/markdown';
+import { Comments } from '@/components/blog/comments';
 import { getPublishedPostBySlug, incrementViews } from '@/server/posts';
 import { formatDate } from '@/lib/utils';
 
@@ -92,6 +93,19 @@ export default async function BlogPostPage({ params }: Props) {
             <Markdown content={post.content} />
           </div>
         </article>
+
+        <Comments
+          slug={post.slug}
+          currentUser={
+            session?.user
+              ? {
+                  id: session.user.id,
+                  name: session.user.name ?? session.user.email ?? '用户',
+                  isAdmin: !!session.user.isAdmin,
+                }
+              : null
+          }
+        />
       </main>
       <Footer />
     </div>

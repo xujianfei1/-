@@ -1,25 +1,33 @@
 /**
  * /blog - 博客列表 (公开)
- * RSC 直读 DB; 管理员可见"写文章"入口
+ * RSC 直读 DB; 支持站内搜索 (?q=); 管理员可见"写文章"入口
  */
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { auth } from '@/lib/auth';
 import { Topbar } from '@/components/topbar';
 import { Footer } from '@/components/footer';
-import { getPublishedPosts } from '@/server/posts';
+import { getPublishedPosts, searchPublishedPosts } from '@/server/posts';
 import { formatDate } from '@/lib/utils';
-import { Pencil } from 'lucide-react';
+import { Pencil, Rss, Search, X } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: '博客',
   description: '技术文章和思考分享',
+  alternates: { types: { 'application/rss+xml': '/blog/feed.xml' } },
 };
 
 export const dynamic = 'force-dynamic';
 
-export default async function BlogPage() {
-  const [posts, session] = await Promise.all([getPublishedPosts(), auth()]);
+type Props = { searchParams: Promise<{ q?: string }> };
+
+export default async function BlogPage({ searchParams }: Props) {
+  const { q } = await searchParams;
+  const kw = q?.trim() || '';
+  const [posts, session] = await Promise.all([
+    kw ? searchPublishedPosts(kw) : getPublishedPosts(),
+    auth(),
+  ]);
   const isAdmin = !!session?.user?.isAdmin;
 
   return (
@@ -33,20 +41,65 @@ export default async function BlogPage() {
               技术文章和思考分享 · 共 {posts.length} 篇
             </p>
           </div>
-          {isAdmin && (
-            <Link
-              href="/blog/write"
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border/30 bg-surface px-3 py-1.5 text-sm font-medium text-text transition-colors hover:border-accent hover:text-accent"
+          <div className="flex shrink-0 items-center gap-2">
+            <a
+              href="/blog/feed.xml"
+              title="RSS 订阅"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border/30 bg-surface px-3 py-1.5 text-sm font-medium text-text-muted transition-colors hover:border-accent hover:text-accent"
             >
-              <Pencil className="h-3.5 w-3.5" />
-              写文章
+              <Rss className="h-3.5 w-3.5" />
+              RSS
+            </a>
+            {isAdmin && (
+              <Link
+                href="/blog/write"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border/30 bg-surface px-3 py-1.5 text-sm font-medium text-text transition-colors hover:border-accent hover:text-accent"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                写文章
+              </Link>
+            )}
+          </div>
+        </header>
+
+        {/* 站内搜索 */}
+        <form action="/blog" method="get" className="flex items-center gap-2">
+          <div className="relative flex-1 max-w-md">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-faint" />
+            <input
+              name="q"
+              defaultValue={kw}
+              placeholder="搜索标题、摘要、标签或正文…"
+              maxLength={80}
+              className="w-full rounded-lg border border-border/30 bg-surface py-2 pl-9 pr-3 text-sm text-text outline-none transition-colors focus:border-accent"
+            />
+          </div>
+          <button
+            type="submit"
+            className="rounded-lg border border-border/30 bg-surface px-4 py-2 text-sm font-medium text-text transition-colors hover:border-accent hover:text-accent"
+          >
+            搜索
+          </button>
+          {kw && (
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-1 text-sm text-text-muted transition-colors hover:text-accent"
+            >
+              <X className="h-3.5 w-3.5" />
+              清除
             </Link>
           )}
-        </header>
+        </form>
+
+        {kw && (
+          <p className="-mt-4 text-sm text-text-muted">
+            关键词「<span className="text-text">{kw}</span>」的搜索结果
+          </p>
+        )}
 
         {posts.length === 0 ? (
           <div className="rounded-xl border border-border/30 bg-surface p-10 text-center text-sm text-text-muted">
-            还没有发布任何文章, 敬请期待。
+            {kw ? '没有匹配的文章, 换个关键词试试。' : '还没有发布任何文章, 敬请期待。'}
           </div>
         ) : (
           <ul className="flex flex-col gap-4">

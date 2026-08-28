@@ -77,3 +77,76 @@ export async function incrementViews(slug: string) {
     select: { views: true },
   });
 }
+
+// ============================================================
+// 站内搜索 (v2)
+// ============================================================
+
+/** 已发布文章搜索: 标题/摘要/标签/正文 任一命中 (不返回正文) */
+export async function searchPublishedPosts(q: string) {
+  const kw = q.trim();
+  return prisma.post.findMany({
+    where: {
+      status: 'published',
+      OR: [
+        { title: { contains: kw } },
+        { summary: { contains: kw } },
+        { tags: { contains: kw } },
+        { content: { contains: kw } },
+      ],
+    },
+    orderBy: { publishedAt: 'desc' },
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      summary: true,
+      tags: true,
+      status: true,
+      views: true,
+      publishedAt: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  }) as Promise<Omit<Post, 'content'>[]>;
+}
+
+// ============================================================
+// 评论 (v2)
+// ============================================================
+
+/** 某篇文章的评论列表 (带评论者昵称, 按时间正序) */
+export async function getComments(postId: string) {
+  return prisma.comment.findMany({
+    where: { postId },
+    orderBy: { createdAt: 'asc' },
+    select: {
+      id: true,
+      body: true,
+      createdAt: true,
+      userId: true,
+      user: { select: { name: true } },
+    },
+  });
+}
+
+export async function addComment(postId: string, userId: string, body: string) {
+  return prisma.comment.create({
+    data: { postId, userId, body },
+    select: {
+      id: true,
+      body: true,
+      createdAt: true,
+      userId: true,
+      user: { select: { name: true } },
+    },
+  });
+}
+
+export async function getCommentById(id: string) {
+  return prisma.comment.findUnique({ where: { id }, select: { id: true, userId: true, postId: true } });
+}
+
+export async function deleteComment(id: string) {
+  return prisma.comment.delete({ where: { id } });
+}

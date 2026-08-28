@@ -26,6 +26,12 @@ export const postCreateSchema = z.object({
 
 export const postUpdateSchema = postCreateSchema.partial();
 
+export const commentCreateSchema = z.object({
+  body: z.string().trim().min(1, '评论不能为空').max(1000, '评论最长 1000 字'),
+});
+
+export type CommentCreate = z.infer<typeof commentCreateSchema>;
+
 export type PostCreate = z.infer<typeof postCreateSchema>;
 export type PostUpdate = z.infer<typeof postUpdateSchema>;
 

@@ -37,3 +37,4 @@ period-tracker-*.tar.gz
 
 # ZCode 会话配置
 .zcode/
+.ops-tmp/
