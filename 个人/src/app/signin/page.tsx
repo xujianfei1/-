@@ -82,7 +82,10 @@ export default function SignInPage() {
     <div className="container flex min-h-[calc(100vh-120px)] items-center justify-center py-10">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <span className="mx-auto mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-amber-400 text-lg font-bold text-white shadow-lg shadow-accent/25">
+            ✦
+          </span>
+          <h1 className="text-2xl font-bold tracking-tight">
             {mode === 'login' ? '登录个人门户' : '创建账号'}
           </h1>
           <p className="mt-2 text-sm text-text-muted">

@@ -68,7 +68,7 @@ export default async function BlogPostPage({ params }: Props) {
                 草稿 (仅管理员可见)
               </span>
             )}
-            <h1 className="text-xl font-semibold leading-snug md:text-2xl">{post.title}</h1>
+            <h1 className="text-2xl font-bold leading-snug tracking-tight md:text-3xl">{post.title}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-text-faint">
               <time>{formatDate(post.publishedAt ?? post.updatedAt)}</time>
               {post.status === 'published' && (

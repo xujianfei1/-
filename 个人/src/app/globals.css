@@ -4,34 +4,35 @@
 
 @layer base {
   :root {
-    /* Claude 风格暖色奶油 */
-    --bg: 40 30% 97%;
-    --bg-secondary: 40 30% 98%;
+    /* 暖纸编辑部: 亮色 = 温润纸面 + 陶土橙 */
+    --bg: 40 33% 98%;
+    --bg-secondary: 36 40% 96%;
     --surface: 0 0% 100%;
-    --surface-hover: 40 30% 98%;
-    --text: 30 10% 12%;
-    --text-muted: 30 5% 43%;
-    --text-faint: 30 5% 65%;
-    --accent: 18 55% 58%;
-    --accent-hover: 18 50% 50%;
-    --accent-soft: 18 55% 90%;
+    --surface-hover: 38 40% 97%;
+    --text: 28 12% 13%;
+    --text-muted: 28 6% 42%;
+    --text-faint: 30 6% 64%;
+    --accent: 20 62% 51%;
+    --accent-hover: 20 66% 46%;
+    --accent-soft: 26 60% 94%;
     --border: 30 10% 12%;
     --border-strong: 30 10% 12%;
   }
 
   .dark {
-    --bg: 60 3% 15%;
-    --bg-secondary: 60 3% 18%;
-    --surface: 60 3% 18%;
-    --surface-hover: 60 3% 22%;
-    --text: 40 30% 97%;
-    --text-muted: 40 5% 65%;
-    --text-faint: 40 5% 45%;
-    --accent: 18 60% 65%;
-    --accent-hover: 18 65% 70%;
-    --accent-soft: 18 30% 22%;
-    --border: 40 30% 97%;
-    --border-strong: 40 30% 97%;
+    /* 暗色 = 深暖炭 (去绿灰, 更沉浸) */
+    --bg: 26 10% 10%;
+    --bg-secondary: 26 9% 13%;
+    --surface: 26 9% 14%;
+    --surface-hover: 26 9% 18%;
+    --text: 38 25% 95%;
+    --text-muted: 36 8% 64%;
+    --text-faint: 36 6% 44%;
+    --accent: 24 66% 64%;
+    --accent-hover: 24 72% 70%;
+    --accent-soft: 22 30% 20%;
+    --border: 38 20% 90%;
+    --border-strong: 38 20% 90%;
   }
 
   * {
@@ -44,11 +45,10 @@
   }
 
   body {
-    background-image: radial-gradient(
-      ellipse 80% 50% at 50% 0%,
-      hsl(var(--accent) / 0.10),
-      transparent 60%
-    );
+    /* 双层极光: 顶部暖晕 + 右上冷调余晖, 更通透 */
+    background-image:
+      radial-gradient(ellipse 70% 45% at 50% -5%, hsl(var(--accent) / 0.13), transparent 65%),
+      radial-gradient(ellipse 40% 30% at 85% 0%, hsl(42 80% 60% / 0.06), transparent 70%);
     background-attachment: fixed;
     transition: background-color 0.2s ease, color 0.2s ease;
   }

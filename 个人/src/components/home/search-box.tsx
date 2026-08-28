@@ -63,7 +63,7 @@ export function SearchBox() {
           e.preventDefault();
           handleSubmit(query);
         }}
-        className="group relative rounded-[28px] border border-border bg-surface p-4 shadow-sm transition-all focus-within:border-accent focus-within:shadow-[0_0_0_4px_var(--accent-soft),0_4px_16px_rgba(31,30,28,0.06)]"
+        className="group relative rounded-[24px] border border-black/[0.06] bg-surface p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_-12px_rgba(0,0,0,0.14)] transition-all duration-300 focus-within:border-accent/50 focus-within:shadow-[0_0_0_4px_hsl(var(--accent)/0.12),0_16px_48px_-12px_rgba(0,0,0,0.20)] dark:border-white/[0.08]"
       >
         <textarea
           ref={inputRef}
@@ -73,13 +73,18 @@ export function SearchBox() {
           placeholder="搜索服务、输入网址,或问点什么..."
           rows={1}
           spellCheck={false}
-          className="w-full resize-none border-0 bg-transparent text-sm leading-relaxed text-text placeholder:text-text-faint focus:outline-none px-1 py-1.5 min-h-[28px] max-h-[200px]"
+          className="w-full resize-none border-0 bg-transparent text-base leading-relaxed text-text placeholder:text-text-faint/80 focus:outline-none px-1 py-1.5 min-h-[32px] max-h-[200px]"
         />
         <div className="mt-1 flex items-center justify-end gap-1.5">
           <Button type="button" variant="ghost" size="icon" aria-label="附件">
             <Paperclip className="h-4 w-4" />
           </Button>
-          <Button type="submit" size="icon" aria-label="发送">
+          <Button
+            type="submit"
+            size="icon"
+            aria-label="发送"
+            className="h-9 w-9 rounded-xl bg-gradient-to-br from-accent to-amber-400 text-white shadow-md shadow-accent/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/30"
+          >
             <Send className="h-4 w-4" />
           </Button>
         </div>
