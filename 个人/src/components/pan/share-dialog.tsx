@@ -257,7 +257,9 @@ function CreatedView({
           </div>
           <h3 className="mt-4 text-lg font-semibold">分享已就绪</h3>
           <p className="mt-1 text-xs text-text-muted">
-            1 小时内任何人凭此链接可访问 ·{' '}
+            {share.expiresAt
+              ? `链接有效期至 ${new Date(share.expiresAt).toLocaleString('zh-CN')} · `
+              : '链接永久有效, 任何人凭此链接可访问 · '}
             <a href="/pan" className="text-accent hover:underline">查看我的分享</a>
           </p>
         </div>

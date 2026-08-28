@@ -1,9 +1,10 @@
 /**
- * GET    /api/services/[id]  - 获取单个服务
- * PUT    /api/services/[id]  - 更新
- * DELETE /api/services/[id]  - 删除
+ * GET    /api/services/[id]  - 获取单个服务 (公开)
+ * PUT    /api/services/[id]  - 更新 (仅 admin)
+ * DELETE /api/services/[id]  - 删除 (仅 admin)
  */
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireAdmin } from '@/lib/auth';
 import { serviceUpdateSchema } from '@/lib/validations';
 import { getServiceById, updateService, deleteService } from '@/server/services';
 
@@ -19,6 +20,8 @@ export async function GET(_req: NextRequest, ctx: RouteContext) {
 }
 
 export async function PUT(req: NextRequest, ctx: RouteContext) {
+  const auth = await requireAdmin();
+  if ('error' in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
   const { id } = await ctx.params;
   try {
     const body = await req.json();
@@ -38,6 +41,8 @@ export async function PUT(req: NextRequest, ctx: RouteContext) {
 }
 
 export async function DELETE(_req: NextRequest, ctx: RouteContext) {
+  const auth = await requireAdmin();
+  if ('error' in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
   const { id } = await ctx.params;
   try {
     await deleteService(id);

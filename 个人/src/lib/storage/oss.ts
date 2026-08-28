@@ -18,6 +18,7 @@
  */
 import { Readable } from 'node:stream';
 import OSS from 'ali-oss';
+import type { OSSClient } from 'ali-oss';
 import type { StorageDriver } from './types';
 
 interface OssConfig {
@@ -55,11 +56,11 @@ function readConfig(): OssConfig {
 }
 
 export class OssDriver implements StorageDriver {
-  private readonly client: OSS;
+  private readonly client: OSSClient;
   /** 独立的公网 client: 用来给浏览器签 presigned URL.
    *  走 OSS_INTERNAL=true 时, this.client 是内网 endpoint, 浏览器访问不到 (内网 IP),
    *  必须在签 URL 时切到公网, 否则浏览器直传报 "网络错误". */
-  private readonly publicClient: OSS;
+  private readonly publicClient: OSSClient;
   private readonly bucket: string;
 
   constructor(config?: Partial<OssConfig>) {

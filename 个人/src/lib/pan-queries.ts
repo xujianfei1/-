@@ -613,6 +613,8 @@ export async function listUsersWithStats() {
     const s = byOwner.get(u.id);
     return {
       ...u,
+      // quotaBytes 是 BigInt, 无法 JSON.stringify, 转字符串
+      quotaBytes: u.quotaBytes.toString(),
       fileCount: s?.fileCount ?? 0,
       totalSize: (s?.totalSize ?? 0n).toString(),
     };

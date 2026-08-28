@@ -1,4 +1,5 @@
-import { SERVICE_STATUS_MAP, type ServiceStatus as ServiceStatusType } from '@/lib/constants';
+import { SERVICE_STATUS_MAP } from '@/lib/constants';
+import type { ServiceStatus as ServiceStatusType } from '@/lib/validations';
 import { cn } from '@/lib/utils';
 
 export function StatusBadge({ status }: { status: ServiceStatusType }) {

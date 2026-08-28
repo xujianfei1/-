@@ -1,10 +1,9 @@
 /**
- * GET    /api/services   - 列出所有服务
- * POST   /api/services   - 创建新服务
- *
- * 鉴权: 当前默认公开, 后续可在 src/server/services.ts 加 auth 检查
+ * GET    /api/services   - 列出所有服务 (公开)
+ * POST   /api/services   - 创建新服务 (仅 admin)
  */
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireAdmin } from '@/lib/auth';
 import { serviceCreateSchema } from '@/lib/validations';
 import { getServices, createService } from '@/server/services';
 
@@ -19,6 +18,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const auth = await requireAdmin();
+  if ('error' in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
   try {
     const body = await req.json();
     const parsed = serviceCreateSchema.safeParse(body);

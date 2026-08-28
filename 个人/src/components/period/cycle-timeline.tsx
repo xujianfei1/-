@@ -63,8 +63,8 @@ export function CycleTimeline({ cycles }: { cycles: Cycle[] }) {
   }
 
   const sorted = cycles.slice().sort((a, b) => a.startDate.localeCompare(b.startDate));
-  const firstMs = new Date(sorted[0].startDate).getTime();
-  const lastRecMs = new Date(sorted[sorted.length - 1].startDate).getTime();
+  const firstMs = new Date(sorted[0]!.startDate).getTime();
+  const lastRecMs = new Date(sorted[sorted.length - 1]!.startDate).getTime();
   const todayMs = new Date(todayISO()).getTime();
   const endMs = Math.max(lastRecMs, todayMs) + PAD_DAYS * DAY_MS;
   const startMs = firstMs - PAD_DAYS * DAY_MS;
@@ -75,7 +75,7 @@ export function CycleTimeline({ cycles }: { cycles: Cycle[] }) {
     Math.round((new Date(iso).getTime() - startMs) / DAY_MS * PX_PER_DAY);
 
   const segments = sorted.slice(1).map((c, i) => {
-    const prev = sorted[i];
+    const prev = sorted[i]!;
     return { from: prev, to: c, gap: daysBetween(prev.startDate, c.startDate) };
   });
 

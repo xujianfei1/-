@@ -19,5 +19,8 @@ export async function GET() {
   if (!user) {
     return NextResponse.json({ error: '用户不存在' }, { status: 404 });
   }
-  return NextResponse.json({ data: user });
+  // BigInt 无法 JSON.stringify, 转字符串 (与 /api/pan/quota 一致)
+  return NextResponse.json({
+    data: { ...user, quotaBytes: user.quotaBytes.toString() },
+  });
 }

@@ -166,8 +166,9 @@ export function middleware(req: NextRequest) {
   // ban 校验交给 route handler 里的 requireActiveUser() 兜底.
   if (req.nextUrl.pathname.startsWith('/api/pan/') &&
       !req.nextUrl.pathname.startsWith('/api/pan/public-share/')) {
-    const c = req.cookies.get('__Secure-next-auth.session-token')
-           ?? req.cookies.get('next-auth.session-token');
+    // NextAuth v5 的 cookie 前缀是 authjs. (v4 才是 next-auth.)
+    const c = req.cookies.get('__Secure-authjs.session-token')
+           ?? req.cookies.get('authjs.session-token');
     if (!c) {
       const res = new NextResponse(
         JSON.stringify({ error: '未登录' }),

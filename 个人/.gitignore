@@ -63,3 +63,6 @@ prisma/migrations/dev/
 # Logs
 logs
 *.log
+
+# 本地测试产物
+/storage/

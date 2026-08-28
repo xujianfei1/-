@@ -11,7 +11,7 @@
  */
 import { type NextRequest, NextResponse } from 'next/server';
 import { Readable, PassThrough } from 'node:stream';
-import { Zip, ZipPassThrough } from 'fflate';
+import { Zip, ZipPassThrough, zipSync } from 'fflate';
 import { getShareByToken, collectFilesUnder } from '@/lib/pan-queries';
 import { prisma } from '@/lib/prisma';
 import { getStorage } from '@/lib/storage';
@@ -77,11 +77,13 @@ export async function GET(req: NextRequest, ctx: RouteContext) {
   // 文件夹: 打包 zip 流
   const collected = await collectFilesUnder(file);
   if (collected.length === 0) {
-    // 空目录也返回一个有效 zip (只有目录项)
+    // 空目录也返回一个有效 zip: zipSync({}) 产出仅含 EOCD 的合法空包 (22 字节)
     const zipName = `${file.name}.zip`;
     const filenameStar = encodeFilenameStar(zipName);
+    const emptyZip = zipSync({}, { level: 0 });
     const empty = new Readable({
       read() {
+        this.push(Buffer.from(emptyZip));
         this.push(null);
       },
     });

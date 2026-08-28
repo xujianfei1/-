@@ -14,7 +14,7 @@
     --text-faint: 30 5% 65%;
     --accent: 18 55% 58%;
     --accent-hover: 18 50% 50%;
-    --accent-soft: 18 55% 58%;
+    --accent-soft: 18 55% 90%;
     --border: 30 10% 12%;
     --border-strong: 30 10% 12%;
   }
@@ -29,7 +29,7 @@
     --text-faint: 40 5% 45%;
     --accent: 18 60% 65%;
     --accent-hover: 18 65% 70%;
-    --accent-soft: 18 60% 65%;
+    --accent-soft: 18 30% 22%;
     --border: 40 30% 97%;
     --border-strong: 40 30% 97%;
   }

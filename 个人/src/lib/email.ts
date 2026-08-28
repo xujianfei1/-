@@ -101,7 +101,6 @@ export async function sendPasswordResetEmail(params: PasswordResetParams): Promi
   try {
     const { default: DysmsClient } = await import('@alicloud/dm-2015-11-23');
     const config = getConfig();
-    // @ts-expect-error: SDK 构造签名
     const client = new DysmsClient({
       accessKeyId: config.accessKeyId,
       accessKeySecret: config.accessKeySecret,

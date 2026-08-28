@@ -35,7 +35,7 @@ function formatBytes(n: bigint | string | number): string {
 }
 
 async function patchBan(userId: string, banned: boolean): Promise<void> {
-  const r = await fetch(`/api/admin/users/${userId}/ban`, {
+  const r = await fetch(`/api/admin/users/${userId}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ banned }),

@@ -1,8 +1,9 @@
 /**
- * GET  /api/links  - 列出所有快捷链接
- * POST /api/links  - 创建新链接
+ * GET  /api/links  - 列出所有快捷链接 (公开)
+ * POST /api/links  - 创建新链接 (仅 admin)
  */
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireAdmin } from '@/lib/auth';
 import { linkCreateSchema } from '@/lib/validations';
 import { getLinks, createLink } from '@/server/links';
 
@@ -17,6 +18,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const auth = await requireAdmin();
+  if ('error' in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
   try {
     const body = await req.json();
     const parsed = linkCreateSchema.safeParse(body);

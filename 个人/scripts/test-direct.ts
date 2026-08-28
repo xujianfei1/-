@@ -43,7 +43,7 @@ async function main() {
   console.log('[3/9] PUT each part to OSS (fetch) + capture ETag...');
   const etags: Array<{ partNumber: number; etag: string }> = [];
   for (let i = 0; i < PART_COUNT; i++) {
-    const res = await fetch(urls[i]!, { method: 'PUT', body: parts[i] });
+    const res = await fetch(urls[i]!, { method: 'PUT', body: new Uint8Array(parts[i]!) });
     if (!res.ok) {
       const text = await res.text().catch(() => '');
       throw new Error(`PUT part ${i + 1} failed: HTTP ${res.status} ${text}`);
