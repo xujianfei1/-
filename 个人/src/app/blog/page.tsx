@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import { auth } from '@/lib/auth';
 import { Topbar } from '@/components/topbar';
 import { Footer } from '@/components/footer';
+import { CinemaStill } from '@/components/blog/cinema-still';
 import { getPublishedPosts, searchPublishedPosts } from '@/server/posts';
 import { formatDate } from '@/lib/utils';
 import { Pencil, Rss, Search, X } from 'lucide-react';
@@ -109,8 +110,10 @@ export default async function BlogPage({ searchParams }: Props) {
                 <li key={post.id}>
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="group block rounded-2xl border border-black/[0.06] bg-surface p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_8px_24px_-16px_rgba(0,0,0,0.10)] transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_2px_4px_rgba(0,0,0,0.04),0_16px_40px_-16px_rgba(0,0,0,0.18)] dark:border-white/[0.06]"
+                    className="group block overflow-hidden rounded-2xl border border-black/[0.06] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.03),0_8px_24px_-16px_rgba(0,0,0,0.10)] transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_2px_4px_rgba(0,0,0,0.04),0_16px_40px_-16px_rgba(0,0,0,0.18)] dark:border-white/[0.06]"
                   >
+                    <CinemaStill slug={post.slug} className="transition-transform duration-500 group-hover:scale-[1.02]" />
+                    <div className="p-5">
                     <div className="flex items-baseline justify-between gap-3">
                       <h2 className="text-base font-semibold text-text transition-colors group-hover:text-accent md:text-lg">
                         {post.title}
@@ -133,6 +136,7 @@ export default async function BlogPage({ searchParams }: Props) {
                         </span>
                       )}
                       <span>{post.views} 次阅读</span>
+                    </div>
                     </div>
                   </Link>
                 </li>

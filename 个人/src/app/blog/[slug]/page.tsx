@@ -12,6 +12,8 @@ import { Topbar } from '@/components/topbar';
 import { Footer } from '@/components/footer';
 import { Markdown } from '@/components/blog/markdown';
 import { Comments } from '@/components/blog/comments';
+import { CinemaStill } from '@/components/blog/cinema-still';
+import { cinemaPaletteFor } from '@/lib/cinema';
 import { getPublishedPostBySlug, incrementViews } from '@/server/posts';
 import { formatDate } from '@/lib/utils';
 
@@ -48,6 +50,7 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   const tags = post.tags ? post.tags.split(',').map((t) => t.trim()).filter(Boolean) : [];
+  const palette = cinemaPaletteFor(post.slug);
 
   return (
     <div className="container flex min-h-screen flex-col py-6 md:py-10">
@@ -61,15 +64,22 @@ export default async function BlogPostPage({ params }: Props) {
           返回博客
         </Link>
 
-        <article className="rounded-xl border border-border/30 bg-surface p-6 md:p-8">
-          <header className="border-b border-border/20 pb-5">
+        <article className="overflow-hidden rounded-2xl border border-black/[0.06] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.03),0_8px_24px_-16px_rgba(0,0,0,0.10)] dark:border-white/[0.06]">
+          <CinemaStill slug={post.slug}>
             {post.status === 'draft' && (
-              <span className="mb-3 inline-block rounded-full bg-warning/10 px-2.5 py-0.5 text-xs font-medium text-warning">
+              <span className="mb-4 rounded-full bg-warning/20 px-3 py-1 text-xs font-medium text-white backdrop-blur">
                 草稿 (仅管理员可见)
               </span>
             )}
-            <h1 className="text-2xl font-bold leading-snug tracking-tight md:text-3xl">{post.title}</h1>
-            <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-text-faint">
+            <h1
+              className="max-w-3xl text-2xl font-bold leading-snug tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] md:text-4xl"
+              style={{ color: palette.ink }}
+            >
+              {post.title}
+            </h1>
+          </CinemaStill>
+          <div className="p-6 md:p-8">
+            <div className="flex flex-wrap items-center gap-3 border-b border-border/20 pb-5 text-xs text-text-faint">
               <time>{formatDate(post.publishedAt ?? post.updatedAt)}</time>
               {post.status === 'published' && (
                 <span className="inline-flex items-center gap-1">
@@ -87,10 +97,10 @@ export default async function BlogPostPage({ params }: Props) {
                 </span>
               )}
             </div>
-          </header>
 
-          <div className="pt-6">
-            <Markdown content={post.content} />
+            <div className="pt-6">
+              <Markdown content={post.content} />
+            </div>
           </div>
         </article>
 
