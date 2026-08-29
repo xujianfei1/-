@@ -7,20 +7,18 @@ import { cn } from '@/lib/utils';
 
 export function ServiceCard({ service, index = 0 }: { service: Service; index?: number }) {
   const cardClasses = cn(
-    'group relative flex items-center gap-4 rounded-2xl bg-surface p-4 md:p-5',
-    'border border-black/[0.06] dark:border-white/[0.06]',
-    'shadow-[0_1px_2px_rgba(0,0,0,0.03),0_8px_24px_-16px_rgba(0,0,0,0.10)]',
+    'glass-card group relative flex items-center gap-4 rounded-2xl p-4 md:p-5',
     'transition-all duration-300 ease-out',
-    'hover:-translate-y-1 hover:border-accent/40',
-    'hover:shadow-[0_2px_4px_rgba(0,0,0,0.04),0_16px_40px_-16px_rgba(0,0,0,0.18)]',
+    'hover:-translate-y-1 hover:border-accent/50',
+    'hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.65),0_18px_44px_-14px_rgba(0,0,0,0.28)]',
     'animate-fade-up',
   );
 
   const inner = (
     <>
-      {/* 图标砖: hover 时点亮为品牌渐变 */}
-      <div className="relative z-10 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-accent group-hover:to-amber-400 group-hover:text-white group-hover:shadow-md group-hover:shadow-accent/30">
-        <IconByName name={service.icon} className="h-5 w-5" />
+      {/* 图标砖: 液态玻璃, hover 时点亮为品牌渐变 */}
+      <div className="glass-tile relative z-10 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-accent transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-accent group-hover:to-amber-400 group-hover:text-white group-hover:shadow-md group-hover:shadow-accent/30">
+        <IconByName name={service.icon} className="h-5 w-5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)]" />
       </div>
       <div className="relative z-10 min-w-0 flex-1">
         <div className="flex items-center gap-1.5 text-sm font-semibold text-text">

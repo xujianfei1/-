@@ -35,7 +35,7 @@ export function RecentUpdates({ entries }: { entries: Changelog[] }) {
               <li key={e.id}>
                 <Link
                   href="/updates"
-                  className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-surface"
+                  className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-white/45 dark:hover:bg-white/10"
                 >
                   <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${meta.badge}`}>
                     {meta.label}

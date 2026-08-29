@@ -63,7 +63,7 @@ export function SearchBox() {
           e.preventDefault();
           handleSubmit(query);
         }}
-        className="group relative rounded-[24px] border border-black/[0.06] bg-surface p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_40px_-12px_rgba(0,0,0,0.14)] transition-all duration-300 focus-within:border-accent/50 focus-within:shadow-[0_0_0_4px_hsl(var(--accent)/0.12),0_16px_48px_-12px_rgba(0,0,0,0.20)] dark:border-white/[0.08]"
+        className="glass-card group relative rounded-[24px] p-5 transition-all duration-300 focus-within:border-accent/60 focus-within:shadow-[0_0_0_4px_hsl(var(--accent)/0.15),0_20px_56px_-12px_rgba(0,0,0,0.28)]"
       >
         <textarea
           ref={inputRef}

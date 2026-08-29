@@ -20,10 +20,9 @@ export function QuickLinks({ links }: { links: LinkType[] }) {
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              'group flex items-center gap-2.5 rounded-xl bg-surface/60 px-3.5 py-2.5',
-              'text-sm font-medium text-text-muted transition-all duration-200',
-              'hover:bg-surface hover:text-accent hover:shadow-sm',
-              'border border-transparent hover:border-accent/30',
+              'glass-card group flex items-center gap-2.5 rounded-xl px-3.5 py-2.5',
+              'text-sm font-medium text-text transition-all duration-200',
+              'hover:-translate-y-0.5 hover:text-accent',
             )}
           >
             <span className="text-text-faint transition-colors group-hover:text-accent">

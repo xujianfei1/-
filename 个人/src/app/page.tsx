@@ -28,12 +28,22 @@ export default async function HomePage() {
 
   return (
     <div className="relative">
-      {/* 电影感 hero 背景: 每小时轮换的时段主题剧照 */}
-      <HeroBackdrop />
+      {/* 全页壁纸: 每小时轮换的时段剧照 (玻璃卡片透出壁纸) */}
+      <HeroBackdrop
+        fixed
+        className="inset-0"
+        scrim="bg-gradient-to-b from-black/30 via-black/5 to-black/10 dark:from-black/45 dark:via-black/15 dark:to-black/55"
+        fadeToBg={false}
+      />
+      {/* 下半部纱帘: 渐入页面底色保证可读, 仍保留壁纸微透 */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 bg-gradient-to-b from-transparent via-bg/30 to-bg/85 dark:via-black/5 dark:to-black/60"
+      />
 
       <div className="container relative flex min-h-screen flex-col py-6 md:py-10">
         <Topbar />
-        <main className="flex flex-1 flex-col gap-10 md:gap-14">
+        <main className="flex flex-1 flex-col gap-10 md:gap-14 [&_.text-text-muted]:[text-shadow:0_1px_3px_rgba(255,255,255,0.75)] [&_.text-text-faint]:[text-shadow:0_1px_3px_rgba(255,255,255,0.7)] dark:[&_.text-text-muted]:[text-shadow:none] dark:[&_.text-text-faint]:[text-shadow:none]">
           {/* hero 区: 白字压图 (linear.app 式), 搜索卡保持原样浮在图上 */}
           <div className="relative z-10 [&_h1]:text-white [&_h1]:drop-shadow-[0_2px_14px_rgba(0,0,0,0.55)] [&_section_p]:text-white/85 [&_.text-text-faint]:text-white/60 [&_.text-text-muted]:text-white/80">
             <Greeting />
