@@ -8,6 +8,7 @@ import { Plus } from 'lucide-react';
 import { auth } from '@/lib/auth';
 import { Topbar } from '@/components/topbar';
 import { Footer } from '@/components/footer';
+import { HeroBackdrop } from '@/components/hero-backdrop';
 import { Markdown } from '@/components/blog/markdown';
 import { getChangelogs } from '@/server/changelogs';
 import { TYPE_META, type ChangelogType } from '@/lib/changelog-validations';
@@ -25,10 +26,12 @@ export default async function UpdatesPage() {
   const isAdmin = !!session?.user?.isAdmin;
 
   return (
-    <div className="container flex min-h-screen flex-col py-6 md:py-10">
+    <div className="relative">
+      <HeroBackdrop className="h-[400px] md:h-[440px]" scrim="bg-gradient-to-b from-black/50 via-black/25 to-transparent" />
+      <div className="container relative flex min-h-screen flex-col py-6 md:py-10">
       <Topbar />
       <main className="flex flex-1 flex-col gap-8">
-        <header className="flex items-end justify-between gap-4">
+        <div className="relative z-10 flex items-end justify-between gap-4 [&_h1]:text-white [&_h1]:drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] [&_.text-text-muted]:text-white/85">
           <div>
             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">更新日志</h1>
             <p className="mt-1 text-sm text-text-muted">本站的功能更新与修复记录 · 共 {entries.length} 条</p>
@@ -42,7 +45,7 @@ export default async function UpdatesPage() {
               记一条
             </Link>
           )}
-        </header>
+        </div>
 
         {entries.length === 0 ? (
           <div className="rounded-xl border border-border/30 bg-surface p-10 text-center text-sm text-text-muted">
@@ -73,6 +76,7 @@ export default async function UpdatesPage() {
         )}
       </main>
       <Footer />
+      </div>
     </div>
   );
 }

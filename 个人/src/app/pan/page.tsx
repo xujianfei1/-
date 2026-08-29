@@ -9,6 +9,7 @@ import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { Topbar } from '@/components/topbar';
 import { Footer } from '@/components/footer';
+import { HeroBackdrop } from '@/components/hero-backdrop';
 import { PanClient } from '@/components/pan/pan-client';
 import { portalUrlFor } from '@/lib/portal-url';
 
@@ -28,7 +29,12 @@ export default async function PanPage() {
   const portalUrl = portalUrlFor(hdrs.get('host'));
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="relative flex min-h-screen flex-col">
+      <HeroBackdrop
+        className="h-[300px] md:h-[340px]"
+        scrim="bg-gradient-to-b from-black/55 via-black/35 to-transparent"
+      />
+      <div className="relative">
       <Topbar portalUrl={portalUrl} />
       <main className="flex-1">
         <PanClient
@@ -38,6 +44,7 @@ export default async function PanPage() {
         />
       </main>
       <Footer />
+      </div>
     </div>
   );
 }

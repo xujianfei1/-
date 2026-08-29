@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { HeroBackdrop } from '@/components/hero-backdrop';
 
 type Mode = 'login' | 'register';
 
@@ -79,9 +80,11 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="container flex min-h-[calc(100vh-120px)] items-center justify-center py-10">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
+    <div className="relative">
+    <HeroBackdrop className="absolute inset-0" scrim="bg-black/50" fadeToBg={false} />
+    <div className="container relative flex min-h-screen items-center justify-center py-10">
+      <div className="relative z-10 w-full max-w-sm">
+        <div className="mb-8 text-center [&_h1]:text-white [&_h1]:drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] [&_.text-text-muted]:text-white/85">
           <span className="mx-auto mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-amber-400 text-lg font-bold text-white shadow-lg shadow-accent/25">
             ✦
           </span>
@@ -93,6 +96,7 @@ export default function SignInPage() {
           </p>
         </div>
 
+        <div className="rounded-2xl border border-white/15 bg-surface/90 p-6 shadow-2xl backdrop-blur-xl">
         <form onSubmit={onSubmit} className="space-y-4">
           {mode === 'register' && (
             <div className="space-y-1.5">
@@ -193,7 +197,9 @@ export default function SignInPage() {
             </>
           )}
         </div>
+        </div>
       </div>
+    </div>
     </div>
   );
 }

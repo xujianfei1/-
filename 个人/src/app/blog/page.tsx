@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import { auth } from '@/lib/auth';
 import { Topbar } from '@/components/topbar';
 import { Footer } from '@/components/footer';
+import { HeroBackdrop } from '@/components/hero-backdrop';
 import { CinemaStill } from '@/components/blog/cinema-still';
 import { getPublishedPosts, searchPublishedPosts } from '@/server/posts';
 import { formatDate } from '@/lib/utils';
@@ -32,9 +33,12 @@ export default async function BlogPage({ searchParams }: Props) {
   const isAdmin = !!session?.user?.isAdmin;
 
   return (
-    <div className="container flex min-h-screen flex-col py-6 md:py-10">
+    <div className="relative">
+      <HeroBackdrop className="h-[440px] md:h-[500px]" scrim="bg-gradient-to-b from-black/50 via-black/25 to-transparent" />
+      <div className="container relative flex min-h-screen flex-col py-6 md:py-10">
       <Topbar />
       <main className="flex flex-1 flex-col gap-8">
+        <div className="relative z-10 [&_h1]:text-white [&_h1]:drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] [&_.text-text-muted]:text-white/85 [&_.text-text-faint]:text-white/60">
         <header className="flex items-end justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold md:text-3xl">博客</h1>
@@ -93,10 +97,11 @@ export default async function BlogPage({ searchParams }: Props) {
         </form>
 
         {kw && (
-          <p className="-mt-4 text-sm text-text-muted">
-            关键词「<span className="text-text">{kw}</span>」的搜索结果
+          <p className="-mt-4 text-sm text-white/85">
+            关键词「<span className="text-white">{kw}</span>」的搜索结果
           </p>
         )}
+        </div>
 
         {posts.length === 0 ? (
           <div className="rounded-xl border border-border/30 bg-surface p-10 text-center text-sm text-text-muted">
@@ -146,6 +151,7 @@ export default async function BlogPage({ searchParams }: Props) {
         )}
       </main>
       <Footer />
+      </div>
     </div>
   );
 }
