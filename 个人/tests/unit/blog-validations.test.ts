@@ -9,6 +9,7 @@ import {
   commentCreateSchema,
   slugify,
 } from '@/lib/blog-validations';
+import { changelogCreateSchema } from '@/lib/changelog-validations';
 
 const validPost = {
   title: '我的第一篇文章',
@@ -105,5 +106,21 @@ describe('commentCreateSchema', () => {
 
   it('超 1000 字被拒', () => {
     expect(commentCreateSchema.safeParse({ body: '评'.repeat(1001) }).success).toBe(false);
+  });
+});
+
+describe('changelogCreateSchema', () => {
+  it('合法条目通过, type 默认 feature', () => {
+    const r = changelogCreateSchema.safeParse({ title: '博客 v2 上线', body: '- 搜索\n- RSS' });
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.type).toBe('feature');
+  });
+
+  it('空白标题被拒', () => {
+    expect(changelogCreateSchema.safeParse({ title: '  ', body: 'x' }).success).toBe(false);
+  });
+
+  it('非法 type 被拒', () => {
+    expect(changelogCreateSchema.safeParse({ title: 't', body: 'b', type: 'hotfix' }).success).toBe(false);
   });
 });

@@ -4,8 +4,10 @@ import { Greeting } from '@/components/home/greeting';
 import { SearchBox } from '@/components/home/search-box';
 import { ServiceGrid } from '@/components/home/service-grid';
 import { QuickLinks } from '@/components/home/quick-links';
+import { RecentUpdates } from '@/components/home/recent-updates';
 import { getServices, getOnlineServices } from '@/server/services';
 import { getLinks } from '@/server/links';
+import { getChangelogs } from '@/server/changelogs';
 
 /**
  * 主页 (RSC)
@@ -16,10 +18,11 @@ import { getLinks } from '@/server/links';
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [allServices, onlineServices, links] = await Promise.all([
+  const [allServices, onlineServices, links, updates] = await Promise.all([
     getServices(),
     getOnlineServices(),
     getLinks(),
+    getChangelogs(3),
   ]);
 
   return (
@@ -30,6 +33,7 @@ export default async function HomePage() {
         <SearchBox />
         <ServiceGrid services={allServices} onlineCount={onlineServices.length} />
         <QuickLinks links={links} />
+        <RecentUpdates entries={updates} />
       </main>
       <Footer />
     </div>

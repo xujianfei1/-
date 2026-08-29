@@ -310,3 +310,16 @@ model Comment {
   @@index([postId, createdAt])
   @@index([userId])
 }
+
+/// 更新日志 (v2): 面向访客的站点更新公告, admin 在 /updates/manage 发布
+model Changelog {
+  id        String   @id @default(cuid())
+  title     String
+  /// Markdown 短文 (列表/详情共用渲染)
+  body      String
+  /// feature | fix | improvement | notice
+  type      String   @default("feature")
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
