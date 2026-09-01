@@ -7,7 +7,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { ArrowLeft, Folder, Users, Sparkles, Cloud } from 'lucide-react';
+import { ArrowLeft, Folder, Users, Sparkles, Cloud, FolderOpen } from 'lucide-react';
 import { FileBrowser } from './file-browser';
 import { QuotaBar } from './quota-bar';
 
@@ -54,13 +54,13 @@ export function PanClient({ userName, portalUrl, initialScope = 'private' }: Pro
           <ScopeButton
             active={scope === 'private'}
             onClick={() => { setScope('private'); setCurrentFolderId(null); }}
-            icon={<Folder className="h-3.5 w-3.5" />}
+            icon={<FolderOpen className="h-4 w-4" strokeWidth={1.75} />}
             label="我的文件"
           />
           <ScopeButton
             active={scope === 'shared'}
             onClick={() => { setScope('shared'); setCurrentFolderId(null); }}
-            icon={<Users className="h-3.5 w-3.5" />}
+            icon={<Users className="h-4 w-4" strokeWidth={1.75} />}
             label="共享池"
           />
         </div>

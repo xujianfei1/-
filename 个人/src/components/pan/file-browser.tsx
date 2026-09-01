@@ -1469,7 +1469,7 @@ export function FileBrowser({ scope, folderId, onEnter }: Props) {
           <Home className="mr-1 h-4 w-4" />
           根目录
         </Button>
-        {folderId && <ChevronRight className="h-4 w-4 text-text-muted" />}
+        {folderId && <ChevronRight className="h-4 w-4 text-text-muted" strokeWidth={1.75} />}
         <span className="text-xs text-text-muted">
           {search
             ? `搜索: ${search}`
@@ -1491,7 +1491,7 @@ export function FileBrowser({ scope, folderId, onEnter }: Props) {
             onClick={() => setShowSharesPanel(true)}
             disabled={uploading}
           >
-            <Link2 className="mr-1 h-4 w-4" />
+            <Link2 className="mr-1.5 h-4 w-4" strokeWidth={1.75} />
             我的分享
           </Button>
           <Button
@@ -1500,7 +1500,7 @@ export function FileBrowser({ scope, folderId, onEnter }: Props) {
             onClick={() => setShowNewFolder((s) => !s)}
             disabled={uploading}
           >
-            <FolderPlus className="mr-1 h-4 w-4" />
+            <FolderPlus className="mr-1.5 h-4 w-4" strokeWidth={1.75} />
             新建文件夹
           </Button>
           <Button
@@ -1509,11 +1509,11 @@ export function FileBrowser({ scope, folderId, onEnter }: Props) {
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
           >
-            <Upload className="mr-1 h-4 w-4" />
+            <Upload className="mr-1.5 h-4 w-4" strokeWidth={1.75} />
             上传文件
           </Button>
           <Button size="sm" onClick={() => dirInputRef.current?.click()} disabled={uploading}>
-            <FolderUp className="mr-1 h-4 w-4" />
+            <FolderUp className="mr-1.5 h-4 w-4" strokeWidth={1.75} />
             上传文件夹
           </Button>
           <input
@@ -1681,7 +1681,7 @@ export function FileBrowser({ scope, folderId, onEnter }: Props) {
       {isDragging && (
         <div className="pointer-events-none absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 border-2 border-dashed border-primary bg-primary/5 backdrop-blur-[1px]">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Upload className="h-6 w-6" />
+            <Upload className="h-6 w-6" strokeWidth={1.5} />
           </div>
           <p className="text-sm font-medium text-primary">松开上传</p>
           <p className="text-xs text-text-muted">支持文件 / 文件夹 (保留目录结构)</p>
@@ -1699,7 +1699,7 @@ function EmptyState({ scope, folderId, search }: { scope: 'private' | 'shared'; 
     return (
       <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-bg text-text-faint">
-          <Search className="h-8 w-8" />
+          <Search className="h-8 w-8" strokeWidth={1.5} />
         </div>
         <h3 className="mt-4 text-sm font-medium">无匹配项</h3>
         <p className="mt-1.5 max-w-xs text-xs leading-relaxed text-text-muted">
@@ -1712,9 +1712,9 @@ function EmptyState({ scope, folderId, search }: { scope: 'private' | 'shared'; 
     <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
       <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10 text-accent">
         {inShared ? (
-          <Users className="h-8 w-8" />
+          <Users className="h-8 w-8" strokeWidth={1.5} />
         ) : (
-          <Cloud className="h-8 w-8" />
+          <Cloud className="h-8 w-8" strokeWidth={1.5} />
         )}
       </div>
       <h3 className="mt-4 text-sm font-medium">
