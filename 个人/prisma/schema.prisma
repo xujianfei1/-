@@ -34,6 +34,8 @@ model User {
   banned        Boolean   @default(false)
   /// 密码最后修改时间. 重置密码时更新, jwt callback 比对, 旧 token 自动失效
   passwordChangedAt DateTime?
+  /// 背单词: 当前选择的词书 (CET4|CET6|KAOYAN|CUSTOM)
+  vocabBook         String?
   /// 密码重置 token (256-bit 随机, 存 hash 而非原文). 一次性, 1h 过期
   passwordResetToken    String?   @unique
   passwordResetExpires  DateTime?
@@ -41,6 +43,7 @@ model User {
   sessions      Session[]
   files         File[]    @relation("FileOwner")
   comments      Comment[]
+  vocabProgress VocabProgress[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -322,4 +325,50 @@ model Changelog {
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+/// 背单词: 全局词库 (内置三书 + 用户自定义导入)
+model Word {
+  id          String  @id @default(cuid())
+  /// 小写唯一
+  word        String  @unique
+  /// 美式音标
+  phonetic    String?
+  /// 释义 (多词性换行分隔)
+  definition  String
+  /// 例句 (可空)
+  example     String?
+  exampleTrans String?
+  /// 逗号分隔词书代码: CET4,CET6,KAOYAN,CUSTOM
+  book        String
+  /// 自定义词归属者 (内置词为 null, 全员共享)
+  ownerId     String?
+  createdAt   DateTime @default(now())
+  progress    VocabProgress[]
+
+  @@index([book])
+}
+
+/// 背单词: 每用户每词的 SM-2 学习进度
+model VocabProgress {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wordId       String
+  word         Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  /// SM-2 难度因子 (1.3-2.8)
+  easeFactor   Float    @default(2.5)
+  /// 当前间隔 (天)
+  intervalDays Int      @default(0)
+  /// 连续答对次数
+  repetitions  Int      @default(0)
+  /// 下次复习时间
+  dueAt        DateTime @default(now())
+  /// 最近一次答题质量 (0-5)
+  lastQuality  Int?
+  learnedAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, wordId])
+  @@index([userId, dueAt])
 }

@@ -22,6 +22,7 @@ import {
   Bot,
   Notebook,
   MessagesSquare,
+  Languages,
   Link as LinkIcon,
   type LucideIcon,
 } from 'lucide-react';
@@ -39,6 +40,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   'book-open': BookOpen,
   'notebook-pen': NotebookPen,
   'share-2': Share2,
+  languages: Languages,
   upload: Upload,
   plus: Plus,
   github: Github,

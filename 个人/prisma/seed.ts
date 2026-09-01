@@ -10,9 +10,10 @@ const services = [
   { name: '经期预测', description: '生理周期追踪 · 排卵日推算', url: 'https://period.xujianfei.cn', icon: 'calendar-heart',   status: 'online', sortOrder: 1 },
   { name: '博客',     description: '技术文章和思考分享',       url: '/blog',                        icon: 'feather',           status: 'online', sortOrder: 2 },
   { name: '私有云盘', description: '私人文件存储和分享',       url: 'https://pan.xujianfei.cn',     icon: 'cloud',           status: 'online', sortOrder: 3 },
-  { name: '笔记',     description: '知识管理和笔记系统',       url: null,                           icon: 'notebook-pen',        status: 'dev',    sortOrder: 4 },
-  { name: '文件分享', description: '临时文件分享服务',         url: null,                           icon: 'share-2',           status: 'plan',   sortOrder: 5 },
-  { name: '更多',     description: '更多服务正在开发中',       url: null,                           icon: 'plus',             status: 'idea',   sortOrder: 6 },
+  { name: '背单词', description: '间隔重复 · 四六级考研词库',   url: '/vocab',                       icon: 'languages',        status: 'online', sortOrder: 4 },
+  { name: '笔记',     description: '知识管理和笔记系统',       url: null,                           icon: 'notebook-pen',     status: 'dev',    sortOrder: 5 },
+  { name: '文件分享', description: '临时文件分享服务',         url: null,                           icon: 'share-2',           status: 'plan',   sortOrder: 6 },
+  { name: '更多',     description: '更多服务正在开发中',       url: null,                           icon: 'plus',             status: 'idea',   sortOrder: 7 },
 ];
 
 const links = [
