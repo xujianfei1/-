@@ -94,10 +94,10 @@ function ScopeButton({
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
+      className={`inline-flex items-center gap-1.5 rounded-[15px] px-3 py-1.5 text-sm font-medium transition-all ${
         active
           ? 'bg-accent text-white shadow-sm'
-          : 'text-text-muted hover:bg-bg/40 hover:text-text'
+          : 'text-text-muted hover:bg-black/5 dark:hover:bg-white/10 hover:text-text'
       }`}
     >
       {icon}

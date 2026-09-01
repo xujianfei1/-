@@ -188,7 +188,7 @@ export function BlogEditor() {
               <button
                 onClick={() => setMode('edit')}
                 className={`inline-flex items-center gap-1 rounded-md px-3 py-1 text-sm ${
-                  mode === 'edit' ? 'bg-accent text-white' : 'text-text-muted hover:text-text'
+                  mode === 'edit' ? 'bg-accent text-white shadow-sm' : 'text-text-muted hover:bg-black/5 dark:hover:bg-white/10 hover:text-text'
                 }`}
               >
                 <Pencil className="h-3.5 w-3.5" />
@@ -197,7 +197,7 @@ export function BlogEditor() {
               <button
                 onClick={() => setMode('preview')}
                 className={`inline-flex items-center gap-1 rounded-md px-3 py-1 text-sm ${
-                  mode === 'preview' ? 'bg-accent text-white' : 'text-text-muted hover:text-text'
+                  mode === 'preview' ? 'bg-accent text-white shadow-sm' : 'text-text-muted hover:bg-black/5 dark:hover:bg-white/10 hover:text-text'
                 }`}
               >
                 <Eye className="h-3.5 w-3.5" />
