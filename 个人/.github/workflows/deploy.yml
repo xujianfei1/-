@@ -1,50 +1,47 @@
 name: Deploy
 
-# 推送到 main 时自动部署到服务器 (通过 SSH)
-# 需要在 repo settings 配置以下 secrets:
-#   SSH_HOST, SSH_USER, SSH_KEY, SSH_PORT, DEPLOY_PATH
+# 手动触发的正式部署 (与服务器实际架构一致: systemd portal.service, 非 Docker)
+# 前置 secrets (gh secret set 配置): SSH_HOST, SSH_USER, SSH_KEY, SSH_PORT, DEPLOY_PATH
+# 流程: 打包 HEAD:个人 → 上传 → 解压 → db push → dbfix → 构建 → 重启 portal
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
   deploy:
-    name: Deploy to Server
+    name: Deploy to Server (systemd)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: 复制项目到服务器
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_KEY }}
-          source: '.'
-          target: ${{ secrets.DEPLOY_PATH }}
-          strip_components: 1
-          exclude: |
-            node_modules
-            .next
-            .git
-            *.log
-            coverage
+      - name: 打包源码
+        run: git archive --format=tar.gz -o deploy.tar.gz HEAD:个人
 
-      - name: 服务器端构建并启动
-        uses: appleboy/ssh-action@master
+      - name: 上传到服务器
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: deploy.tar.gz
+          target: /tmp/portal-deploy/
+
+      - name: 服务器端部署 (解压/迁移/构建/重启)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script_stop: true
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
-            cp .env.example .env 2>/dev/null || true
-            # 拉取最新 .env (不通过 git)
-            # 编辑 .env 填入实际值...
-            docker compose down
-            docker compose up -d --build
-            docker compose logs --tail=50
+            tar xzf /tmp/portal-deploy/deploy.tar.gz
+            rm -f /tmp/portal-deploy/deploy.tar.gz
+            ./node_modules/.bin/prisma db push --skip-generate
+            dbfix
+            pnpm install --frozen-lockfile
+            pnpm build
+            systemctl restart portal
+            systemctl is-active portal
