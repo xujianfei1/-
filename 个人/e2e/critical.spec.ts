@@ -8,12 +8,12 @@ import { test, expect } from '@playwright/test';
 
 const ADMIN = { email: 'testa@example.com', password: 'pass123456' };
 
-async function login(page, email = ADMIN.email, password = ADMIN.password) {
+async function login(page: import('@playwright/test').Page, email = ADMIN.email, password = ADMIN.password) {
   await page.goto('/signin');
   await page.getByRole('textbox', { name: '邮箱' }).fill(email);
   await page.getByRole('textbox', { name: '密码' }).fill(password);
   await page.getByRole('button', { name: '登录', exact: true }).click();
-  await page.waitForURL((u) => !u.pathname.includes('signin'), { timeout: 15000 });
+  await page.waitForURL((u: URL) => !u.pathname.includes('signin'), { timeout: 15000 });
 }
 
 test('首页渲染: 问候/搜索/服务卡/hero 壁纸', async ({ page }) => {
