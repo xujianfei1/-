@@ -25,6 +25,7 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+          cache-dependency-path: 个人/pnpm-lock.yaml
 
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
@@ -53,6 +54,7 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+          cache-dependency-path: 个人/pnpm-lock.yaml
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:generate
@@ -80,6 +82,7 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+          cache-dependency-path: 个人/pnpm-lock.yaml
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:generate
